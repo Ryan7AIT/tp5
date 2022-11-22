@@ -16,6 +16,10 @@ mysql.init_app(app)
 
 @app.route('/formAdd', methods=["GET"])
 def doFormAdd():
+    return render_template('formAdd.html')
+
+@app.route('/formUpdate', methods=["GET"])
+def doFormUpdate():
     return render_template('formUpdate.html')
 
 
