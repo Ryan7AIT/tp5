@@ -41,5 +41,36 @@ def doAddPerson() :
     
     return redirect('formAdd')
 
+
+@app.route('/formUpdate', methods=["GET"])
+def doFormUpdate():
+    return render_template('formUpdate.html')
+
+@app.route('/updatePerson', methods=["POST"])
+def doUpdatePerson() :
+    id = request.form["valId"]
+    nom = request.form["valNom"]
+    prenom = request.form["valPrenom"]
+    points = request.form["valPoints"]
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # cursor.execute("UPDATE  person set "  + 
+    #         "nom= '"+nom+"'" + 
+    #         ",prenom= '"+prenom+"'" + 
+    #         ",points= '"+points+"'" + 
+    #         ",where id= "+id)
+
+    # cursor.execute("UPDATE  person set nom= 'changed' , prenom= 'changed' , points= 11 where id= 1")
+    cursor.execute("UPDATE  person set nom='" +nom+ "' , prenom='" +prenom+ "', points='" +points+ "'where id=" +id)
+
+
+
+    conn.commit()
+    cursor.close()
+    
+    return redirect('formUpdate')
+
 if __name__ == "__main__":
 	app.run(debug=True, port=5000) 

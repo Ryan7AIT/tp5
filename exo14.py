@@ -14,15 +14,17 @@ app.config['MYSQL_DATABASE_DB'] = 'db_persons'
 
 mysql.init_app(app)
 
-@app.route('/formDelete', methods=["GET"])
+
+@app.route('/formAdd', methods=["GET"])
 def doFormAdd():
-    return render_template('formDelete.html')
+    return render_template('formAdd.html')
 
 
-@app.route('/deletePerson', methods=["POST"])
-def doDeletePerson() :
-    id = request.form["valId"]
-
+@app.route('/addPerson', methods=["POST"])
+def doAddPerson() :
+    nom = request.form["valNom"]
+    prenom = request.form["valPrenom"]
+    points = request.form["valPoints"]
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -31,12 +33,19 @@ def doDeletePerson() :
     max_ID = cursor.fetchall()[0][0]
     new_ID = max_ID + 1
 
-    cursor.execute("DELETE FROM person where id="+id)
+    # cursor.execute("INSERT INTO person" 'VALUES ('+str(new_ID)+', "'+nom+'", "'+prenom+'", '+points+')')
+    cursor.execute("INSERT INTO person VALUES (" +str(new_ID)+ ",'" +nom+ "', 'ait', 999) ")
+
 
     conn.commit()
     cursor.close()
     
-    return redirect('formDelete')
+    return redirect('formAdd')
+
+
+@app.route('/formUpdate', methods=["GET"])
+def doFormUpdate():
+    return render_template('formUpdate.html')
 
 @app.route('/updatePerson', methods=["POST"])
 def doUpdatePerson() :
@@ -62,7 +71,35 @@ def doUpdatePerson() :
     conn.commit()
     cursor.close()
     
-    return redirect('formAdd')
+    return redirect('formUpdate')
+
+
+
+@app.route('/formDelete', methods=["GET"])
+def doFormDelete():
+    return render_template('formDelete.html')
+
+
+@app.route('/deletePerson', methods=["POST"])
+def doDeletePerson() :
+    id = request.form["valId"]
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT max(id) from PERSON")
+
+    max_ID = cursor.fetchall()[0][0]
+    new_ID = max_ID + 1
+
+    cursor.execute("DELETE FROM person where id="+id)
+
+    conn.commit()
+    cursor.close()
+    
+    return redirect('formDelete')
+
+
 
 if __name__ == "__main__":
 	app.run(debug=True, port=5000) 

@@ -28,9 +28,12 @@ def index():
 
 
 @app.route('/formDelete', methods=["GET"])
-def doFormAdd():
+def doFormDelete():
     return render_template('formDelete.html')
 
+@app.route('/formAdd', methods=["GET"])
+def doFormAdd():
+    return render_template('formAdd.html')
 
 @app.route('/deletePerson', methods=["POST"])
 def doDeletePerson() :
@@ -75,7 +78,33 @@ def doUpdatePerson() :
     conn.commit()
     cursor.close()
     
-    return redirect('formAdd')
+    return redirect('formUpdate')
+
+
+@app.route('/addPerson', methods=["POST"])
+def doAddPerson() :
+    nom = request.form["valNom"]
+    prenom = request.form["valPrenom"]
+    points = request.form["valPoints"]
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT max(id) from PERSON")
+
+    max_ID = cursor.fetchall()[0][0]
+    new_ID = max_ID + 1
+
+    # cursor.execute("INSERT INTO person" 'VALUES ('+str(new_ID)+', "'+nom+'", "'+prenom+'", '+points+')')
+    cursor.execute("INSERT INTO person VALUES (" +str(new_ID)+ ",'" +nom+ "', '" +prenom+ "' , '" +points+ "') ")
+
+
+    conn.commit()
+    cursor.close()
+    
+    return redirect('/')
+
+
+
 
 if __name__ == "__main__":
 	app.run(debug=True, port=5000) 
